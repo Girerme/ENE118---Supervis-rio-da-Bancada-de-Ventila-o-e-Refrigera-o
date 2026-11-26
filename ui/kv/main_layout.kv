@@ -1,0 +1,151 @@
+#:import OverviewScreen ui.screens.overview_screen.OverviewScreen
+#:import ControlScreen ui.screens.control_screen.ControlScreen
+#:import TrendsScreen ui.screens.trends_screen.TrendsScreen
+#:import HistoryScreen ui.screens.history_screen.HistoryScreen
+#:import ConfigScreen ui.screens.config_screen.ConfigScreen
+
+<NavButton@Button>:
+    size_hint_y: None
+    height: dp(46)
+    background_normal: ""
+    background_color: (0.28, 0.30, 0.33, 1) if self.state == "normal" else (0.20, 0.22, 0.25, 1)
+    color: 0.95, 0.95, 0.95, 1
+    font_size: "14sp"
+    bold: True
+
+BoxLayout:
+    orientation: "vertical"
+    canvas.before:
+        Color:
+            rgba: 0.82, 0.82, 0.82, 1  # Fundo cinza neutro (ISA-101)
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+    # ==================== BARRA SUPERIOR FIXA ====================
+    BoxLayout:
+        size_hint_y: None
+        height: dp(54)
+        padding: dp(12), dp(6)
+        spacing: dp(12)
+        canvas.before:
+            Color:
+                rgba: 0.22, 0.24, 0.26, 1
+            Rectangle:
+                pos: self.pos
+                size: self.size
+
+        Label:
+            text: "BANCADA VENTILAÇÃO E REFRIGERAÇÃO"
+            size_hint_x: 0.32
+            halign: "left"
+            valign: "middle"
+            text_size: self.size
+            bold: True
+            color: 0.95, 0.95, 0.95, 1
+
+        # Ambiente ativo (CLP ou Simulador)
+        Label:
+            id: lbl_env
+            text: f"AMBIENTE: {app.active_env}"
+            size_hint_x: 0.22
+            bold: True
+            color: 0.90, 0.90, 0.90, 1
+            canvas.before:
+                Color:
+                    rgba: 0.32, 0.34, 0.37, 1
+                RoundedRectangle:
+                    pos: self.pos
+                    size: self.size
+                    radius: [4]
+
+        # Estado da comunicação (destaque amarelo/vermelho só em falha)
+        Label:
+            id: lbl_comm
+            text: app.comm_status_text
+            size_hint_x: 0.28
+            bold: True
+            color: (0.1, 0.1, 0.1, 1) if not app.is_connected else (0.95, 0.95, 0.95, 1)
+            canvas.before:
+                Color:
+                    rgba: (0.95, 0.75, 0.15, 1) if not app.is_connected else (0.32, 0.34, 0.37, 1)
+                RoundedRectangle:
+                    pos: self.pos
+                    size: self.size
+                    radius: [4]
+
+        # Timestamp da última atualização
+        Label:
+            id: lbl_clock
+            text: app.last_update_str
+            size_hint_x: 0.18
+            halign: "right"
+            valign: "middle"
+            text_size: self.size
+            color: 0.85, 0.85, 0.85, 1
+
+    # ==================== CORPO: MENU + TELAS ====================
+    BoxLayout:
+        orientation: "horizontal"
+
+        # Menu lateral fixo
+        BoxLayout:
+            orientation: "vertical"
+            size_hint_x: None
+            width: dp(190)
+            padding: dp(8)
+            spacing: dp(6)
+            canvas.before:
+                Color:
+                    rgba: 0.25, 0.27, 0.30, 1
+                Rectangle:
+                    pos: self.pos
+                    size: self.size
+
+            NavButton:
+                text: "1. Operação"
+                on_release: app.switch_screen("overview")
+            NavButton:
+                text: "2. Atuação"
+                on_release: app.switch_screen("control")
+            NavButton:
+                text: "3. Tendências"
+                on_release: app.switch_screen("trends")
+            NavButton:
+                text: "4. Histórico"
+                on_release: app.switch_screen("history")
+            NavButton:
+                text: "5. Conexão"
+                on_release: app.switch_screen("config")
+
+            Widget:  # Espaçador para empurrar botões para o topo
+
+        # Área principal das telas
+        ScreenManager:
+            id: screen_manager
+
+            OverviewScreen:
+                name: "overview"
+                Label:
+                    text: "Tela 1: Operação (Visão Geral ISA-101)"
+                    color: 0.15, 0.15, 0.15, 1
+            ControlScreen:
+                name: "control"
+                Label:
+                    text: "Tela 2: Atuação e Sequência Coordenada"
+                    color: 0.15, 0.15, 0.15, 1
+            TrendsScreen:
+                name: "trends"
+                Label:
+                    text: "Tela 3: Tendências em Tempo Real"
+                    color: 0.15, 0.15, 0.15, 1
+            HistoryScreen:
+                name: "history"
+                Label:
+                    text: "Tela 4: Histórico (ORM / SQLite)"
+                    color: 0.15, 0.15, 0.15, 1
+            ConfigScreen:
+                name: "config"
+                Label:
+                    text: "Tela 5: Conexão e Diagnóstico"
+                    color: 0.15, 0.15, 0.15, 1
