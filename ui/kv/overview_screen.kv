@@ -1,0 +1,245 @@
+#:import EquipmentCard ui.widgets.equipment_card.EquipmentCard
+#:import AnalogBar ui.widgets.analog_bar.AnalogBar
+
+<OverviewScreen>:
+    BoxLayout:
+        orientation: "vertical"
+        padding: dp(12)
+        spacing: dp(10)
+
+        # Cabeçalho da tela + botões de teste visual (remover/ocultar após integrar Modbus)
+        BoxLayout:
+            size_hint_y: None
+            height: dp(36)
+            spacing: dp(8)
+
+            Label:
+                text: "VISÃO GERAL DO PROCESSO — VENTILAÇÃO E REFRIGERAÇÃO"
+                bold: True
+                font_size: "15sp"
+                color: 0.15, 0.15, 0.15, 1
+                halign: "left"
+                valign: "middle"
+                text_size: self.size
+
+            Button:
+                text: "Simular Normal"
+                size_hint_x: None
+                width: dp(125)
+                on_release: root.load_mock_normal()
+
+            Button:
+                text: "Simular Alarme"
+                size_hint_x: None
+                width: dp(125)
+                on_release: root.load_mock_alarm()
+
+            Button:
+                text: "Simular Offline"
+                size_hint_x: None
+                width: dp(125)
+                on_release: root.load_mock_offline()
+
+        # ==================== SEÇÃO 1: EQUIPAMENTOS (FLUXO) ====================
+        BoxLayout:
+            orientation: "vertical"
+            size_hint_y: None
+            height: dp(215)
+            padding: dp(10)
+            spacing: dp(8)
+            canvas.before:
+                Color:
+                    rgba: 0.76, 0.76, 0.76, 1
+                RoundedRectangle:
+                    pos: self.pos
+                    size: self.size
+                    radius: [6]
+
+            Label:
+                text: "ESTADO DOS EQUIPAMENTOS (FLUXO: ENTRADA → VENTILAÇÃO → CONDICIONAMENTO → SAÍDA)"
+                size_hint_y: None
+                height: dp(20)
+                bold: True
+                font_size: "12sp"
+                color: 0.20, 0.20, 0.20, 1
+                halign: "left"
+                valign: "middle"
+                text_size: self.size
+
+            GridLayout:
+                cols: 3
+                spacing: dp(10)
+
+                EquipmentCard:
+                    id: eq_ventilador
+                    title: "Ventilador Principal"
+                    subtitle: "Modo: Axial | Inversor"
+
+                EquipmentCard:
+                    id: eq_compressor
+                    title: "Compressor"
+                    subtitle: "Tipo: Scroll"
+
+                EquipmentCard:
+                    id: eq_condensador
+                    title: "Condensador (M-03)"
+                    subtitle: "Troca térmica"
+
+                EquipmentCard:
+                    id: eq_aq1
+                    title: "Aquecedor 01"
+                    subtitle: "Resistência 1"
+
+                EquipmentCard:
+                    id: eq_aq2
+                    title: "Aquecedor 02"
+                    subtitle: "Resistência 2"
+
+                EquipmentCard:
+                    id: eq_umidificador
+                    title: "Umidificador"
+                    subtitle: "Nível de água: OK"
+
+        # ==================== SEÇÃO 2: VARIÁVEIS PRIORITÁRIAS ====================
+        BoxLayout:
+            orientation: "vertical"
+            padding: dp(10)
+            spacing: dp(6)
+            canvas.before:
+                Color:
+                    rgba: 0.76, 0.76, 0.76, 1
+                RoundedRectangle:
+                    pos: self.pos
+                    size: self.size
+                    radius: [6]
+
+            Label:
+                text: "VARIÁVEIS PRIORITÁRIAS DO PROCESSO (FAIXA NORMAL EM AZUL CLARO)"
+                size_hint_y: None
+                height: dp(20)
+                bold: True
+                font_size: "12sp"
+                color: 0.20, 0.20, 0.20, 1
+                halign: "left"
+                valign: "middle"
+                text_size: self.size
+
+            ScrollView:
+                do_scroll_y: False
+                do_scroll_x: True
+
+                BoxLayout:
+                    orientation: "horizontal"
+                    size_hint_x: None
+                    width: self.minimum_width
+                    spacing: dp(8)
+
+                    AnalogBar:
+                        id: bar_temp_saida
+                        label_text: "Temp.\nSaída Ar"
+                        unit: "°C"
+                        min_val: 0
+                        max_val: 60
+                        normal_low: 18
+                        normal_high: 32
+                        alarm_low: 10
+                        alarm_high: 45
+
+                    AnalogBar:
+                        id: bar_vel_ar
+                        label_text: "Veloc.\nSaída Ar"
+                        unit: "m/s"
+                        min_val: 0
+                        max_val: 20
+                        normal_low: 2
+                        normal_high: 14
+                        alarm_low: 0.5
+                        alarm_high: 18
+
+                    AnalogBar:
+                        id: bar_vazao_ar
+                        label_text: "Vazão\nSaída Ar"
+                        unit: "m³/h"
+                        min_val: 0
+                        max_val: 2000
+                        normal_low: 300
+                        normal_high: 1500
+                        alarm_low: 100
+                        alarm_high: 1800
+
+                    AnalogBar:
+                        id: bar_pit03
+                        label_text: "Pressão\nPIT-03"
+                        unit: "mmH2O"
+                        min_val: 0
+                        max_val: 100
+                        normal_low: 15
+                        normal_high: 75
+                        alarm_low: 5
+                        alarm_high: 90
+
+                    AnalogBar:
+                        id: bar_tit01
+                        label_text: "Temp.\nTIT-01 (Az)"
+                        unit: "°C"
+                        min_val: -10
+                        max_val: 50
+                        normal_low: 5
+                        normal_high: 25
+                        alarm_low: 0
+                        alarm_high: 38
+
+                    AnalogBar:
+                        id: bar_tit02
+                        label_text: "Temp.\nTIT-02 (Vm)"
+                        unit: "°C"
+                        min_val: 0
+                        max_val: 80
+                        normal_low: 25
+                        normal_high: 55
+                        alarm_low: 15
+                        alarm_high: 68
+
+                    AnalogBar:
+                        id: bar_pit01
+                        label_text: "Pressão\nPIT-01 (Az)"
+                        unit: "psi"
+                        min_val: 0
+                        max_val: 200
+                        normal_low: 40
+                        normal_high: 120
+                        alarm_low: 20
+                        alarm_high: 160
+
+                    AnalogBar:
+                        id: bar_pit02
+                        label_text: "Pressão\nPIT-02 (Vm)"
+                        unit: "psi"
+                        min_val: 0
+                        max_val: 400
+                        normal_low: 120
+                        normal_high: 280
+                        alarm_low: 60
+                        alarm_high: 340
+
+                    AnalogBar:
+                        id: bar_encoder
+                        label_text: "Rotação\nMotor"
+                        unit: "RPM"
+                        min_val: 0
+                        max_val: 1800
+                        normal_low: 400
+                        normal_high: 1750
+                        alarm_low: 100
+                        alarm_high: 1790
+
+                    AnalogBar:
+                        id: bar_torque
+                        label_text: "Torque\nAxial"
+                        unit: "N·m"
+                        min_val: 0
+                        max_val: 50
+                        normal_low: 2
+                        normal_high: 35
+                        alarm_low: 0
+                        alarm_high: 45

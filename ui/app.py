@@ -18,8 +18,9 @@ class SupervisorioApp(MDApp):
         self.theme_cls.theme_style = "Light"
         self.theme_cls.primary_palette = "Slategray"
 
-        kv_path = Path(__file__).parent / "kv" / "main_layout.kv"
-        return Builder.load_file(str(kv_path))
+        kv_dir = Path(__file__).parent / "kv"
+        Builder.load_file(str(kv_dir / "overview_screen.kv"))
+        return Builder.load_file(str(kv_dir / "main_layout.kv"))
 
     def on_start(self):
         # Atualiza o relógio da barra superior a cada 1 segundo
